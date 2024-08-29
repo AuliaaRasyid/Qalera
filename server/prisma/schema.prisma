@@ -1,0 +1,89 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+ 
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String          @id @default(cuid())
+  username      String?
+  password      String
+  email         String          @unique
+  emailVerified DateTime?
+  accounts      Account[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@id([provider, providerAccountId])
+}
+
+model Partner {
+  partnerId                 String        @id @default(cuid())
+  partnerName               String
+  partnerImage              String
+}
+
+model Team{
+  teamId                   String        @id @default(cuid())
+  teamName                 String
+  teamPosition             String
+  teamImage                String
+}
+
+model Testimoni {
+  testimoniId               String        @id @default(cuid())
+  testimoniDescription      String
+  testimoniName             String
+  testimoniCompany          String
+}
+
+model Career {
+  careerId                  String        @id @default(cuid())
+  careerTitle               String
+  careerLocation            String
+  careerDate                DateTime?
+  careerPosition            String
+  careerDescription         String
+  careerRequirements        String
+  careerText                  String?
+  careerAppliers            Applier[]
+}
+
+model Product{
+  productId                 String        @id @default(cuid())
+  productName               String
+  productDescription        String
+  productImage              String
+}
+
+model Applier {
+  applierId                 String        @id @default(cuid())
+  applierName               String
+  applierPhoneNumber        String
+  applierEmail              String
+  applierAddress            String
+  applierText               String?
+
+  careerId                  String
+  applierCareer             Career        @relation(fields: [careerId], references: [careerId])
+}
